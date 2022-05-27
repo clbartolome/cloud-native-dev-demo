@@ -17,31 +17,11 @@ Use the `install.sh`file to configure the folloing components:
 
 ### 3.1 Development Environment Demo
 
-#### 3.1.1 Create application
+- Development environment Demo:
+- Create a cloud native application from scratch using Quarkus
+- Review Red Hat CodeReady Workspaces
+- Deploy application and review Openshift manifests/resources
+- Include health probes, configuration externalisation and other good practices
 
-- Create a repository in GitHub for the demo code.
-
-- Go to [code.quarkus.redhat.com](https://code.quarkus.redhat.com/) to generate your application:
-  - Group: `com.redhat.cnd`
-  - Arctifact: `rest-example`
-  - Build Tool: `Maven`
-  - Version: `1.0.0-SNAPSHOT`
-  - Java Version: `11`
-  - Starter Code: `Yes`
-  - Extensions: `RESTEasy Jackson`
-
-- Access the Gitea isntance deployed in OCP and clone `application-source` and `application-cicd` repositories. User is `gitea` and the password is `openshift`.
-- Extract and copy the downloaded code into `application-source` repo:
-  ```sh
-  # Clone app
-  mkdir  ~/Desktop/demo/
-  cd ~/Desktop/demo/
-  git clone http://gitea-demo-components.%APPS_CLUSTER%/gitea/application-source.git
-  # Extract content
-  unzip ~/Downloads/rest-example.zip
-  cp -a rest-example/. application-source
-  # Push new code
-  cd application-source
-  git add . && git commit -m "Generated quarkus app." && git push
-  ```
+[Demo instructions](demos/1.develop_environment.md)
 
