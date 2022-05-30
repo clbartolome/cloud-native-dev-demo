@@ -1,0 +1,90 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: ci-demo
+spec:
+  params:
+  - name: SOURCE_GIT_URL
+    type: string
+    description: The application git repository
+    default: http://gitea-demo-components.apps.cluster-d8djj.d8djj.sandbox478.opentlc.com/gitea/application-source
+  - name: SOURCE_GIT_REVISION
+    type: string
+    description: The application git revision
+    default: master
+  - name: APP_NAME
+    type: string
+    description: The application name and path in git
+    default: rest-example
+  workspaces:
+  - name: app-source
+  - name: maven-settings
+  tasks:
+# ------------ CLONE REPOSITORY ------------ #
+  - name: git-clone
+    taskRef:
+      kind: ClusterTask
+      name: git-clone
+    params:
+    - name: url
+      value: $(params.SOURCE_GIT_URL)
+    - name: revision
+      value: $(params.SOURCE_GIT_REVISION)
+    - name: deleteExisting
+      value: 'true'
+    workspaces:
+    - name: output
+      workspace: app-source
+# ------------ GENERATE IMAGE TAG ------------ #
+  - name: generate-tag
+    taskRef:
+      kind: Task
+      name: generate-tag
+# ------------ RUN UNIT TESTS ------------ #
+  - name: unit-tests
+    runAfter:
+    - git-clone
+    - generate-tag
+    taskRef:
+      kind: ClusterTask
+      name: maven
+    params:
+    - name: GOALS
+      value:
+      - package
+      - -DskipTests
+    workspaces:
+    - name: source
+      workspace: app-source
+    - name: maven-settings
+      workspace: maven-settings
+# ------------ Build image ------------ #
+  - name: build-image
+    runAfter:
+    - unit-tests
+    taskRef:
+      kind: ClusterTask
+      name: s2i-java
+    params:
+      - name: IMAGE
+        value: image-registry.openshift-image-registry.svc:5000/demo-dev/rest-example
+    workspaces:
+    - name: source
+      workspace: app-source
+# ------------ Tag image ------------ #
+  - name: tag-image
+    runAfter:
+    - build-image
+    taskRef:
+      kind: Task
+      name: tag-image
+    params:
+      - name: IMAGE
+        value: demo-dev/rest-example
+      - name: IMAGE_TAG
+        value: latest
+      - name: IMAGE_NEW_TAG
+        value: "$(tasks.generate-tag.results.image-tag)"
+    workspaces:
+    - name: source
+      workspace: app-source
