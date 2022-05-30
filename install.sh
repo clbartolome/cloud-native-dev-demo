@@ -50,34 +50,36 @@ GITEA_HOSTNAME=
 
 info "Starting installation"
 
-# info "Creating namespaces"
-# oc new-project $NS_CICD
-# oc new-project $NS_CRW
+info "Creating namespaces"
+oc new-project $NS_CICD
+oc new-project $NS_CRW
+oc new-project $NS_APP_DEV
+oc new-project $NS_APP_STAGE
 
-# info "Deploying and configuring GITEA"
-# oc apply -f openshift-environment/01-gitea/deploy.yaml -n $NS_CICD
-# GITEA_HOSTNAME=$(oc get route gitea -o template --template='{{.spec.host}}' -n $NS_CICD)
-# sed "s/@HOSTNAME/$GITEA_HOSTNAME/g" openshift-environment/01-gitea/configuration.yaml | oc create -f - -n $NS_CICD
-# oc rollout status deployment/gitea -n $NS_CICD
-# sed "s/@HOSTNAME/$GITEA_HOSTNAME/g" openshift-environment/01-gitea/setup_job.yaml | oc apply -f - --wait -n $NS_CICD
-# oc wait --for=condition=complete job/configure-gitea --timeout=60s -n $NS_CICD
-# info "GITEA configuration completed!!"
+info "Deploying and configuring GITEA"
+oc apply -f openshift-environment/01-gitea/deploy.yaml -n $NS_CICD
+GITEA_HOSTNAME=$(oc get route gitea -o template --template='{{.spec.host}}' -n $NS_CICD)
+sed "s/@HOSTNAME/$GITEA_HOSTNAME/g" openshift-environment/01-gitea/configuration.yaml | oc create -f - -n $NS_CICD
+oc rollout status deployment/gitea -n $NS_CICD
+sed "s/@HOSTNAME/$GITEA_HOSTNAME/g" openshift-environment/01-gitea/setup_job.yaml | oc apply -f - --wait -n $NS_CICD
+oc wait --for=condition=complete job/configure-gitea --timeout=60s -n $NS_CICD
+info "GITEA configuration completed!!"
 
 info "Deploying and configuring CRW"
-# oc apply -f openshift-environment/02-codeReady_workspaces/operator_group.yaml -n $NS_CRW
-# deploy_operator openshift-environment/02-codeReady_workspaces/operator_sub.yaml codeready-workspaces $NS_CRW
-# oc apply -f openshift-environment/02-codeReady_workspaces/che-cluster.yaml -n $NS_CRW
-# LOOP="TRUE"
-# while [ $LOOP == "TRUE" ]
-# do
-#     sleep 5
-#     STATUS=$(oc get checluster codeready-workspaces -n $NS_CRW -o template --template '{{.status.cheClusterRunning}}')
-#     if [ "$STATUS" == "Available" ]
-#     then
-#         echo "Eclipse Che instance Available"
-#         LOOP="FALSE" 
-#     fi
-# done
+oc apply -f openshift-environment/02-codeReady_workspaces/operator_group.yaml -n $NS_CRW
+deploy_operator openshift-environment/02-codeReady_workspaces/operator_sub.yaml codeready-workspaces $NS_CRW
+oc apply -f openshift-environment/02-codeReady_workspaces/che-cluster.yaml -n $NS_CRW
+LOOP="TRUE"
+while [ $LOOP == "TRUE" ]
+do
+    sleep 5
+    STATUS=$(oc get checluster codeready-workspaces -n $NS_CRW -o template --template '{{.status.cheClusterRunning}}')
+    if [ "$STATUS" == "Available" ]
+    then
+        echo "Eclipse Che instance Available"
+        LOOP="FALSE" 
+    fi
+done
 oc get secret pull-secret -n openshift-config -o yaml | sed "s/openshift-config/$NS_CRW/g" | oc create -n $NS_CRW -f -
 
 
