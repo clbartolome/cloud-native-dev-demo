@@ -42,6 +42,8 @@ NS_CRW=demo-crw
 NS_APP_DEV=demo-dev
 NS_APP_STAGE=demo-stage
 GITEA_HOSTNAME=
+ARGO_URL=
+ARGO_PASS=
 #-----------------------------------------------------------------------------
 
 ##############################################################################
@@ -51,10 +53,10 @@ GITEA_HOSTNAME=
 info "Starting installation"
 
 info "Creating namespaces"
-# oc new-project $NS_CICD
-# oc new-project $NS_CRW
-# oc new-project $NS_APP_DEV
-# oc new-project $NS_APP_STAGE
+oc new-project $NS_CICD
+oc new-project $NS_CRW
+oc new-project $NS_APP_DEV
+oc new-project $NS_APP_STAGE
 
 # info "Deploying and configuring GITEA"
 # oc apply -f openshift-environment/01-gitea/deploy.yaml -n $NS_CICD
@@ -82,12 +84,18 @@ info "Creating namespaces"
 # done
 # oc get secret pull-secret -n openshift-config -o yaml | sed "s/openshift-config/$NS_CRW/g" | oc create -n $NS_CRW -f -
 
-info "Deploying and configuring OpenShift pipelines"
-# deploy_operator openshift-environment/03-tekton/operator_sub.yaml openshift-pipelines-operator-rh openshift-operators
-oc policy add-role-to-user edit system:serviceaccount:$NS_CICD:pipeline -n $NS_APP_DEV
-oc policy add-role-to-user edit system:serviceaccount:$NS_CICD:pipeline -n $NS_APP_STAGE
-oc policy add-role-to-user system:image-puller system:serviceaccount:$NS_APP_STAGE:default -n $NS_CICD
-oc policy add-role-to-user system:image-puller system:serviceaccount:$NS_APP_STAGE:default -n $NS_APP_DEV
+# info "Deploying and configuring OpenShift pipelines"
+# # deploy_operator openshift-environment/03-tekton/operator_sub.yaml openshift-pipelines-operator-rh openshift-operators
+# oc policy add-role-to-user edit system:serviceaccount:$NS_CICD:pipeline -n $NS_APP_DEV
+# oc policy add-role-to-user edit system:serviceaccount:$NS_CICD:pipeline -n $NS_APP_STAGE
+# oc policy add-role-to-user system:image-puller system:serviceaccount:$NS_APP_STAGE:default -n $NS_CICD
+# oc policy add-role-to-user system:image-puller system:serviceaccount:$NS_APP_STAGE:default -n $NS_APP_DEV
+
+info "Deploying and configuring GitOps"
+deploy_operator openshift-environment/04-gitops/operator_sub.yaml openshift-gitops-operator openshift-operators
+oc apply -f openshift-environment/04-gitops/roles.yaml -n $NS_APP_STAGE
+ARGO_URL=$(oc get route openshift-gitops-server -ojsonpath='{.spec.host}' -n openshift-gitops)
+ARGO_PASS=$(oc get secret openshift-gitops-cluster -n openshift-gitops -ojsonpath='{.data.admin\.password}' | base64 -d)
 
 
 
