@@ -91,11 +91,18 @@ oc new-project $NS_APP_STAGE
 # oc policy add-role-to-user system:image-puller system:serviceaccount:$NS_APP_STAGE:default -n $NS_CICD
 # oc policy add-role-to-user system:image-puller system:serviceaccount:$NS_APP_STAGE:default -n $NS_APP_DEV
 
-info "Deploying and configuring GitOps"
-deploy_operator openshift-environment/04-gitops/operator_sub.yaml openshift-gitops-operator openshift-operators
-oc apply -f openshift-environment/04-gitops/roles.yaml -n $NS_APP_STAGE
-ARGO_URL=$(oc get route openshift-gitops-server -ojsonpath='{.spec.host}' -n openshift-gitops)
-ARGO_PASS=$(oc get secret openshift-gitops-cluster -n openshift-gitops -ojsonpath='{.data.admin\.password}' | base64 -d)
+# info "Deploying and configuring GitOps"
+# deploy_operator openshift-environment/04-gitops/operator_sub.yaml openshift-gitops-operator openshift-operators
+# oc apply -f openshift-environment/04-gitops/roles.yaml -n $NS_APP_STAGE
+# ARGO_URL=$(oc get route openshift-gitops-server -ojsonpath='{.spec.host}' -n openshift-gitops)
+# ARGO_PASS=$(oc get secret openshift-gitops-cluster -n openshift-gitops -ojsonpath='{.data.admin\.password}' | base64 -d)
+
+info "Deploying and configuring Jaegger (+ collector)"
+# deploy_operator openshift-environment/05-jaegger/operator_jaeger_sub.yaml jaeger-product openshift-operators
+# deploy_operator openshift-environment/05-jaegger/operator_collector_sub.yaml opentelemetry-product openshift-operators
+oc apply -f openshift-environment/05-jaegger/jaeger_instance.yaml -n $NS_CICD
+oc wait --for=condition=Available=True deploy/cnd-jaeger --timeout=200s -n $NS_CICD
+
 
 
 

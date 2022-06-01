@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rest-example-stage
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/clbartolome/cloud-native-dev-demo
+    targetRevision: master
+    path: application-cicd/deploy/overlays/stage
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo-stage
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

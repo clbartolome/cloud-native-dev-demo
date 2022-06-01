@@ -1,0 +1,33 @@
+---
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: cnd-collector
+spec:
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+          http:
+    processors:
+      batch:
+
+    exporters:
+      logging:
+        loglevel: info
+
+      jaeger:
+        endpoint: cnd-jaeger-collector-headless.demo-components.svc:14250
+        tls:
+          ca_file: "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [logging,jaeger]
+  mode: sidecar
+  resources: {}
+  targetAllocator: {}

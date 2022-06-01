@@ -7,7 +7,7 @@ spec:
   - name: SOURCE_GIT_URL
     type: string
     description: The application git repository
-    default: http://gitea-demo-components.apps.cluster-d8djj.d8djj.sandbox478.opentlc.com/gitea/application-source
+    default: @GITEA_HOST_SOURCE
   - name: SOURCE_GIT_REVISION
     type: string
     description: The application git revision
