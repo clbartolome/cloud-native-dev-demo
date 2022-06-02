@@ -11,7 +11,12 @@ Repository to configure OpenShift environment and deliver the demo.
 Login into the cli where you're going to execute the installation (admin user).
 
 Use the `install.sh`file to configure the folloing components:
+
 - Gitea
+- CodeReady
+- Tekton
+- GitOps
+- Jaeger
 
 ## 3. Demos
 
@@ -24,4 +29,12 @@ Use the `install.sh`file to configure the folloing components:
 - Include health probes, configuration externalisation and other good practices
 
 [Demo instructions](demos/1.develop_environment.md)
+
+### 3.1 CICD Environment Demo
+
+- Create a Tekton pipeline for CI
+- Use ArgoCD for CD (GitOps introduction)
+- Review S2I process and image registry
+
+[Demo instructions](demos/2.cicd_environment.md)
 
