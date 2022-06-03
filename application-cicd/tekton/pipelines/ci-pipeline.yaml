@@ -51,8 +51,7 @@ spec:
     params:
     - name: GOALS
       value:
-      - package
-      - -DskipTests
+      - test
     workspaces:
     - name: source
       workspace: app-source

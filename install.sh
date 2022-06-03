@@ -58,50 +58,51 @@ oc new-project $NS_CRW
 oc new-project $NS_APP_DEV
 oc new-project $NS_APP_STAGE
 
-# info "Deploying and configuring GITEA"
-# oc apply -f openshift-environment/01-gitea/deploy.yaml -n $NS_CICD
-# GITEA_HOSTNAME=$(oc get route gitea -o template --template='{{.spec.host}}' -n $NS_CICD)
-# sed "s/@HOSTNAME/$GITEA_HOSTNAME/g" openshift-environment/01-gitea/configuration.yaml | oc create -f - -n $NS_CICD
-# oc rollout status deployment/gitea -n $NS_CICD
-# sed "s/@HOSTNAME/$GITEA_HOSTNAME/g" openshift-environment/01-gitea/setup_job.yaml | oc apply -f - --wait -n $NS_CICD
-# oc wait --for=condition=complete job/configure-gitea --timeout=60s -n $NS_CICD
-# info "GITEA configuration completed!!"
+info "Deploying and configuring GITEA"
+oc apply -f openshift-environment/01-gitea/deploy.yaml -n $NS_CICD
+GITEA_HOSTNAME=$(oc get route gitea -o template --template='{{.spec.host}}' -n $NS_CICD)
+sed "s/@HOSTNAME/$GITEA_HOSTNAME/g" openshift-environment/01-gitea/configuration.yaml | oc create -f - -n $NS_CICD
+oc rollout status deployment/gitea -n $NS_CICD
+sed "s/@HOSTNAME/$GITEA_HOSTNAME/g" openshift-environment/01-gitea/setup_job.yaml | oc apply -f - --wait -n $NS_CICD
+oc wait --for=condition=complete job/configure-gitea --timeout=60s -n $NS_CICD
+info "GITEA configuration completed!!"
 
-# info "Deploying and configuring CRW"
-# oc apply -f openshift-environment/02-codeReady_workspaces/operator_group.yaml -n $NS_CRW
-# deploy_operator openshift-environment/02-codeReady_workspaces/operator_sub.yaml codeready-workspaces $NS_CRW
-# oc apply -f openshift-environment/02-codeReady_workspaces/che-cluster.yaml -n $NS_CRW
-# LOOP="TRUE"
-# while [ $LOOP == "TRUE" ]
-# do
-#     sleep 5
-#     STATUS=$(oc get checluster codeready-workspaces -n $NS_CRW -o template --template '{{.status.cheClusterRunning}}')
-#     if [ "$STATUS" == "Available" ]
-#     then
-#         echo "Eclipse Che instance Available"
-#         LOOP="FALSE" 
-#     fi
-# done
-# oc get secret pull-secret -n openshift-config -o yaml | sed "s/openshift-config/$NS_CRW/g" | oc create -n $NS_CRW -f -
+info "Deploying and configuring CRW"
+oc apply -f openshift-environment/02-codeReady_workspaces/operator_group.yaml -n $NS_CRW
+deploy_operator openshift-environment/02-codeReady_workspaces/operator_sub.yaml codeready-workspaces $NS_CRW
+oc apply -f openshift-environment/02-codeReady_workspaces/che-cluster.yaml -n $NS_CRW
+LOOP="TRUE"
+while [ $LOOP == "TRUE" ]
+do
+    sleep 5
+    STATUS=$(oc get checluster codeready-workspaces -n $NS_CRW -o template --template '{{.status.cheClusterRunning}}')
+    if [ "$STATUS" == "Available" ]
+    then
+        echo "Eclipse Che instance Available"
+        LOOP="FALSE" 
+    fi
+done
+oc get secret pull-secret -n openshift-config -o yaml | sed "s/openshift-config/$NS_CRW/g" | oc create -n $NS_CRW -f -
 
-# info "Deploying and configuring OpenShift pipelines"
-# # deploy_operator openshift-environment/03-tekton/operator_sub.yaml openshift-pipelines-operator-rh openshift-operators
-# oc policy add-role-to-user edit system:serviceaccount:$NS_CICD:pipeline -n $NS_APP_DEV
-# oc policy add-role-to-user edit system:serviceaccount:$NS_CICD:pipeline -n $NS_APP_STAGE
-# oc policy add-role-to-user system:image-puller system:serviceaccount:$NS_APP_STAGE:default -n $NS_CICD
-# oc policy add-role-to-user system:image-puller system:serviceaccount:$NS_APP_STAGE:default -n $NS_APP_DEV
+info "Deploying and configuring OpenShift pipelines"
+deploy_operator openshift-environment/03-tekton/operator_sub.yaml openshift-pipelines-operator-rh openshift-operators
+oc policy add-role-to-user edit system:serviceaccount:$NS_CICD:pipeline -n $NS_APP_DEV
+oc policy add-role-to-user edit system:serviceaccount:$NS_CICD:pipeline -n $NS_APP_STAGE
+oc policy add-role-to-user system:image-puller system:serviceaccount:$NS_APP_STAGE:default -n $NS_CICD
+oc policy add-role-to-user system:image-puller system:serviceaccount:$NS_APP_STAGE:default -n $NS_APP_DEV
 
-# info "Deploying and configuring GitOps"
-# deploy_operator openshift-environment/04-gitops/operator_sub.yaml openshift-gitops-operator openshift-operators
-# oc apply -f openshift-environment/04-gitops/roles.yaml -n $NS_APP_STAGE
-# ARGO_URL=$(oc get route openshift-gitops-server -ojsonpath='{.spec.host}' -n openshift-gitops)
-# ARGO_PASS=$(oc get secret openshift-gitops-cluster -n openshift-gitops -ojsonpath='{.data.admin\.password}' | base64 -d)
+info "Deploying and configuring GitOps"
+deploy_operator openshift-environment/04-gitops/operator_sub.yaml openshift-gitops-operator openshift-operators
+oc apply -f openshift-environment/04-gitops/roles.yaml -n $NS_APP_STAGE
+ARGO_URL=$(oc get route openshift-gitops-server -ojsonpath='{.spec.host}' -n openshift-gitops)
+ARGO_PASS=$(oc get secret openshift-gitops-cluster -n openshift-gitops -ojsonpath='{.data.admin\.password}' | base64 -d)
 
-info "Deploying and configuring Jaegger (+ collector)"
-# deploy_operator openshift-environment/05-jaegger/operator_jaeger_sub.yaml jaeger-product openshift-operators
-# deploy_operator openshift-environment/05-jaegger/operator_collector_sub.yaml opentelemetry-product openshift-operators
+info "Deploying and configuring Jaegger (All in One)"
+deploy_operator openshift-environment/05-jaegger/operator_jaeger_sub.yaml jaeger-product openshift-operators
 oc apply -f openshift-environment/05-jaegger/jaeger_instance.yaml -n $NS_CICD
 oc wait --for=condition=Available=True deploy/cnd-jaeger --timeout=200s -n $NS_CICD
+
+# TODO:: ADD URLs AND CREDENTIALS REVIEW
 
 
 
