@@ -1,9 +1,10 @@
 # cloud-native-dev-demo
 Repository to configure OpenShift environment and deliver the demo.
 
-## 1. Pre-requisites
+## Pre-requisites
 
 - `OC` client.
+- `tkn` client.
 - OpenShift cluster with admin rights.
 
 ## 2. Environment Installation
@@ -18,9 +19,9 @@ Use the `install.sh`file to configure the folloing components:
 - GitOps
 - Jaeger
 
-## 3. Demos
+## Demos
 
-### 3.1 Development Environment Demo
+### 1. Development Environment Demo
 
 - Development environment Demo:
 - Create a cloud native application from scratch using Quarkus
@@ -30,7 +31,7 @@ Use the `install.sh`file to configure the folloing components:
 
 [Demo instructions](demos/1.develop_environment.md)
 
-### 3.1 CICD Environment Demo
+### 2. CICD Environment Demo
 
 - Create a Tekton pipeline for CI
 - Use ArgoCD for CD (GitOps introduction)
