@@ -11,13 +11,13 @@ Repository to configure OpenShift environment and deliver the demo.
 
 Login into the cli where you're going to execute the installation (admin user).
 
-Use the `install.sh`file to configure the folloing components:
+Use the `install.sh`file to configure the following components:
 
-- Gitea
-- CodeReady
-- Tekton
-- GitOps
-- Jaeger
+- Gitea: repository + 2 demo projects initialized.
+- CodeReady: single instance.
+- Tekton: openshift pipelines operator.
+- GitOps: openshift gitops operator.
+- Jaeger: all in one instance.
 
 ## Demos
 

@@ -9,6 +9,9 @@ bases:
 commonLabels:
   app: rest-example-stage
 
+patches:
+- ./deploy-replicas-patch.yaml
+
 configMapGenerator:
 - name: rest-example-configuration
   envs:
