@@ -52,6 +52,8 @@ spec:
     - name: GOALS
       value:
       - test
+    - name: CONTEXT_DIR
+      value: application-source
     workspaces:
     - name: source
       workspace: app-source
@@ -66,7 +68,9 @@ spec:
       name: s2i-java
     params:
       - name: IMAGE
-        value: image-registry.openshift-image-registry.svc:5000/demo-dev/rest-example
+        value: image-registry.openshift-image-registry.svc:5000/zz-dev/rest-example
+      - name: PATH_CONTEXT
+        value: application-source
     workspaces:
     - name: source
       workspace: app-source
