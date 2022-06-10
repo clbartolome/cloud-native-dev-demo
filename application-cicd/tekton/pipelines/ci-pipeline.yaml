@@ -7,7 +7,7 @@ spec:
   - name: SOURCE_GIT_URL
     type: string
     description: The application git repository
-    default: @GITEA_HOST_SOURCE
+    default: https://github.com/clbartolome/cloud-native-dev-demo
   - name: SOURCE_GIT_REVISION
     type: string
     description: The application git revision
@@ -79,7 +79,7 @@ spec:
       name: tag-image
     params:
       - name: IMAGE
-        value: demo-dev/rest-example
+        value: zz-dev/rest-example
       - name: IMAGE_TAG
         value: latest
       - name: IMAGE_NEW_TAG

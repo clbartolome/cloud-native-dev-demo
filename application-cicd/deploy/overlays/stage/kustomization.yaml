@@ -19,5 +19,5 @@ configMapGenerator:
 
 images:
 - name: rest-example
-  newName: image-registry.openshift-image-registry.svc:5000/demo-dev/rest-example
+  newName: image-registry.openshift-image-registry.svc:5000/zz-dev/rest-example
   newTag: latest
