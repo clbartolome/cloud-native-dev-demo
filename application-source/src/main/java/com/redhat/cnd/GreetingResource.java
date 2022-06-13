@@ -15,6 +15,7 @@ public class GreetingResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String hello() {
+        System.out.println("ZZ API");
         return service.message();
     }
 }

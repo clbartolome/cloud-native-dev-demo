@@ -21,6 +21,8 @@ Use the `install.sh`file to configure the following components:
 
 *TODO: Configure EFK with installation file, right now must be configured manually*
 
+Use `example.sh` file to test de demo environment with an application that will be deployed in namespacces with the prefix `zz`.
+
 ## Demos
 
 ### 1. Development Environment Demo
