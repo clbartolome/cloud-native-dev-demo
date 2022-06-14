@@ -23,7 +23,11 @@ Use the `install.sh`file to configure the following components:
 
 Use `example.sh` file to test de demo environment with an application that will be deployed in namespacces with the prefix `zz`.
 
-## Demos
+## Seesion
+
+### Introduction
+
+:loudspeaker: Introduction to Cloud Native Development in OpenShift - [slides](https://docs.google.com/presentation/d/1euR1cECe1J6JuJXqe7PQ7zM8XavtRUKPC-q1vXfzfAo/edit?usp=sharing) [1 to 20] :loudspeaker: 
 
 ### 1. Development Environment Demo
 
