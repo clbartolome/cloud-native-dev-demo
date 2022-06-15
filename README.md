@@ -54,10 +54,3 @@ Use `example.sh` file to test de demo environment with an application that will 
 - Review traces in Jaeger
 
 [Demo instructions](demos/3.stage_environment.md)
-
-## Example App
-
-Use the `example.sh` file to deploy an example:
-
-- CI pipeline
-- Stage application
