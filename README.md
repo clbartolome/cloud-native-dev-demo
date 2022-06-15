@@ -57,7 +57,7 @@ Use `example.sh` file to test de demo environment with an application that will 
 
 ## Example App
 
-Use the `example.sh`file to deploy in other namespaces the an example of the demo:
+Use the `example.sh` file to deploy an example:
 
 - CI pipeline
 - Stage application
