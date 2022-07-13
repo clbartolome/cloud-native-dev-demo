@@ -85,6 +85,7 @@ oc get secret pull-secret -n openshift-config -o yaml | sed "s/openshift-config/
 
 info "Deploying and configuring OpenShift pipelines"
 deploy_operator openshift-environment/03-tekton/operator_sub.yaml openshift-pipelines-operator-rh openshift-operators
+sleep 30
 oc policy add-role-to-user edit system:serviceaccount:$NS_CICD:pipeline -n $NS_APP_DEV
 oc policy add-role-to-user edit system:serviceaccount:$NS_CICD:pipeline -n $NS_APP_STAGE
 oc policy add-role-to-user system:image-puller system:serviceaccount:$NS_APP_STAGE:default -n $NS_CICD
@@ -92,6 +93,7 @@ oc policy add-role-to-user system:image-puller system:serviceaccount:$NS_APP_STA
 
 info "Deploying and configuring GitOps"
 deploy_operator openshift-environment/04-gitops/operator_sub.yaml openshift-gitops-operator openshift-operators
+sleep 15
 oc apply -f openshift-environment/04-gitops/roles.yaml -n $NS_APP_STAGE
 ARGO_URL=$(oc get route openshift-gitops-server -ojsonpath='{.spec.host}' -n openshift-gitops)
 ARGO_PASS=$(oc get secret openshift-gitops-cluster -n openshift-gitops -ojsonpath='{.data.admin\.password}' | base64 -d)
@@ -106,7 +108,6 @@ oc wait --for=condition=Available=True deploy/cnd-jaeger --timeout=200s -n $NS_C
 
 
 # TODO:: ADD URLs AND CREDENTIALS REVIEW
-
 
 
 
