@@ -48,7 +48,7 @@ apiVersion: 1.0.0
         - type: exec
           component: maven
           command: mvn package
-          workdir: '${CHE_PROJECTS_ROOT}/rest-example/application-source
+          workdir: '${CHE_PROJECTS_ROOT}/rest-example/application-source'
     - name: 2. Run unit tests
       actions:
         - type: exec
