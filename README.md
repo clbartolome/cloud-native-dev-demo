@@ -1,7 +1,7 @@
 # cloud-native-dev-demo
 Repository to configure OpenShift environment and deliver the demo.
 
-[![Create workspace](https://img.shields.io/badge/Red%20Hat-EE0000?style=for-the-badge&logo=redhat&logoColor=white)](https://codeready-openshift-workspaces.apps.ocp4cluster.ocp4.cfernand.com/#https://raw.githubusercontent.com/clbartolome/cloud-native-dev-demo/devspaces-test/application-source/dev.yaml)
+[![Create workspace](https://img.shields.io/badge/Red%20Hat-EE0000?style=for-the-badge&logo=redhat&logoColor=white)](https://codeready-openshift-workspaces.apps.ocp4cluster.ocp4.cfernand.com/#https://github.com/clbartolome/cloud-native-dev-demo/tree/devspaces-test/application-source)
 
 
 ## Pre-requisites
