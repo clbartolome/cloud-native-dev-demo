@@ -6,7 +6,7 @@ apiVersion: 1.0.0
       source:
         type: git
         location: 'https://github.com/clbartolome/cloud-native-dev-demo'
-        branch: 'master'
+        branch: 'devspaces-test'
   components:
     - type: chePlugin
       id: redhat/quarkus-java11/latest
